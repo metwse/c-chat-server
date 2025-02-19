@@ -1,6 +1,12 @@
 #!/bin/bash
 
-gcc -std=c99 -g -Wall -Werror $1.c $(find ../src/ ./testutils/ -not -name main.c -name \*.c) -o /tmp/c-test
+tmp_executable=$(mktemp /tmp/c-test.XXXXXX)
+
+gcc -std=c99 -g \
+    -Wall -Werror \
+    $1 $(find ../src/ ./testutils/ -not -name main.c -name \*.c) \
+    -o $tmp_executable -lm
 if [[ $? -eq 0 ]]; then
-    /tmp/c-test
+    echo "executing: $tmp_executable"
+    $tmp_executable
 fi

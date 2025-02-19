@@ -1,5 +1,5 @@
 #include "../../include/collections/bstree.h"
-#include <stdio.h>
+
 #include <stdlib.h>
 #include <string.h>
 
@@ -13,8 +13,8 @@ BSTree *BSTree_new(instance_identify identify, instance_drop drop) {
     return bt;
 }
 
-Node *Node_new(void *instance) {
-    Node *node = malloc(sizeof(Node));
+BSTree_Node *Node_new(void *instance) {
+    BSTree_Node *node = malloc(sizeof(BSTree_Node));
     node->gt = NULL;
     node->lt = NULL;
     node->instance = instance;
@@ -27,14 +27,14 @@ char BSTree_push(BSTree *bt, void *instance) {
     int idLen = strlen(id);
     if (idLen == 0) return 0;
 
-    Node *createdNode = Node_new(instance);
+    BSTree_Node *createdNode = Node_new(instance);
 
     if (!bt->root) {
         bt->root = createdNode;
         return 1;
     }
 
-    Node *currentNode = bt->root;
+    BSTree_Node *currentNode = bt->root;
     while (1) {
         const char *nodeId = bt->identify(currentNode->instance);
         int cmp = strcmp(nodeId, id);
@@ -61,7 +61,7 @@ void *BSTree_get(const BSTree *bt, const char *id) {
 
     if (!bt->root) return NULL;
 
-    Node *currentNode = bt->root;
+    BSTree_Node *currentNode = bt->root;
     while (1) {
         const char *nodeId = bt->identify(currentNode->instance);
         int cmp = strcmp(nodeId, id);
@@ -74,15 +74,15 @@ void *BSTree_get(const BSTree *bt, const char *id) {
     }
 }
 
-int BSTree_remove(BSTree *bt, const char *id) {
+char BSTree_remove(BSTree *bt, const char *id) {
     int idLen = strlen(id);
     if (idLen == 0) return 0;
 
     if (!bt->root) return 0;
 
-    Node *parent = NULL;
+    BSTree_Node *parent = NULL;
     int parentDirection = 0;
-    Node *currentNode = bt->root;
+    BSTree_Node *currentNode = bt->root;
     while (1) {
         const char *nodeId = bt->identify(currentNode->instance);
         int cmp = strcmp(nodeId, id);
@@ -102,8 +102,8 @@ int BSTree_remove(BSTree *bt, const char *id) {
     }
 
     if (currentNode->lt && currentNode->gt) {
-        Node *successorParent = currentNode;
-        Node *successor = currentNode->gt;
+        BSTree_Node *successorParent = currentNode;
+        BSTree_Node *successor = currentNode->gt;
         int parentDirection = 1;
         while (successor->lt) {
             parentDirection = 0;
@@ -118,7 +118,7 @@ int BSTree_remove(BSTree *bt, const char *id) {
         return 1;
     } 
     
-    Node *overwritingNode = currentNode->lt ? currentNode->lt : currentNode->gt;
+    BSTree_Node *overwritingNode = currentNode->lt ? currentNode->lt : currentNode->gt;
     if (parent) 
         if (parentDirection) parent->gt = overwritingNode;
         else parent->lt = overwritingNode;
@@ -129,6 +129,6 @@ int BSTree_remove(BSTree *bt, const char *id) {
     return 1;
 }
 
-int BSTree_contains(const BSTree *bt, const char *id) {
+char BSTree_contains(const BSTree *bt, const char *id) {
     return !!BSTree_get(bt, id);
 }
