@@ -1,9 +1,12 @@
-#ifndef COLLECTIONS_BTREE_H
-#define COLLECTIONS_BTREE_H
+/*! 
+ * `BSTree` implements basic methods of binary search tree struct.
+ */
 
+#ifndef COLLECTIONS_BSTREE_H
+#define COLLECTIONS_BSTREE_H
 
 /**
- * Identifier type alias as a trait
+ * \brief Identifier type alias as a trait
  *
  * A function pointer that returns unique id for given instance.
  */
@@ -13,6 +16,8 @@ typedef const char* (*BSTree_Identifier)(void *instance);
  * Remover type alias as a trait
  *
  * A function pointer that frees the memory allocated to the instance.
+ *
+ * @param instance Instance identifier to be removed.
  */
 typedef void (*BSTree_Remover)(void *instance);
 
@@ -62,4 +67,4 @@ int BSTree_remove(BSTree *, const char *id);
  */
 int BSTree_contains(const BSTree *, const char *id);
 
-#endif // !COLLECTIONS_BTREE_H
+#endif // !COLLECTIONS_BSTREE_H

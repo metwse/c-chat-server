@@ -1,4 +1,4 @@
-this project currently unfinished. it is not recommended to use any code in
+this project currently unfinished. it is not recommended to use any code of
 the project due to possible stability problems. no api is well-tested or 
 stabilized yet.
 
