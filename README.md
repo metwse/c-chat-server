@@ -1,3 +1,7 @@
+this project currently unfinished. it is not recommended to use any code in
+the project due to possible stability problems. no api is well-tested or 
+stabilized yet.
+
 # chat server
 Simple TCP-based chat server.
 

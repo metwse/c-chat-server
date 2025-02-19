@@ -3,11 +3,18 @@
 
 
 /**
- * Identifier type alias
+ * Identifier type alias as a trait
  *
  * A function pointer that returns unique id for given instance.
  */
-typedef const char* (*Identifier)(void* instance);
+typedef const char* (*BSTree_Identifier)(void *instance);
+
+/**
+ * Remover type alias as a trait
+ *
+ * A function pointer that frees the memory allocated to the instance.
+ */
+typedef void (*BSTree_Remover)(void *instance);
 
 /**
  * Node struct
@@ -16,42 +23,43 @@ typedef const char* (*Identifier)(void* instance);
  * returns an unique identifier for it.
  */
 typedef struct Node {
-    struct Node* gt;
-    struct Node* lt;
-    void* instance;
+    struct Node *gt;
+    struct Node *lt;
+    void *instance;
 } Node;
 
 /**
  * BinaryTree struct
  */
 typedef struct {
-    Identifier identifier;
-    Node* root;
-} BTree;
+    BSTree_Identifier identifier;
+    BSTree_Remover remover;
+    Node *root;
+} BSTree;
 
 /**
- * Creates a new BTree.
+ * Creates a new BSTree.
  */
-BTree* newBTree(Identifier);
+BSTree *BSTree_new(BSTree_Identifier, BSTree_Remover);
 
 /**
- * Pushes data into BTree.
+ * Pushes data into BSTree.
  */
-char BTree_push(BTree *, void *instance);
+char BSTree_push(BSTree *, void *instance);
 
 /**
- * Gets data from BTree.
+ * Gets data from BSTree.
  */
-void* BTree_get(const BTree *, const char *id);
+void *BSTree_get(const BSTree *, const char *id);
 
 /**
  * Removes instance by its id.
  */
-int BTree_remove(BTree *, const char *id);
+int BSTree_remove(BSTree *, const char *id);
 
 /**
- * Check whether identifier contained in the BTree.
+ * Check whether identifier contained in the BSTree.
  */
-int BTree_contains(const BTree *, const char *id);
+int BSTree_contains(const BSTree *, const char *id);
 
 #endif // !COLLECTIONS_BTREE_H
