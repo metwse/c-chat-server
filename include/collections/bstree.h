@@ -5,24 +5,10 @@
 #ifndef COLLECTIONS_BSTREE_H
 #define COLLECTIONS_BSTREE_H
 
-/**
- * \brief Identifier type alias as a trait
- *
- * A function pointer that returns unique id for given instance.
- */
-typedef const char* (*BSTree_Identifier)(void *instance);
+#include "traits.h"
 
 /**
- * Remover type alias as a trait
- *
- * A function pointer that frees the memory allocated to the instance.
- *
- * @param instance Instance identifier to be removed.
- */
-typedef void (*BSTree_Remover)(void *instance);
-
-/**
- * Node struct
+ * \brief Node struct
  * 
  * data should implemet a char *identifier(DataType const* data) function which
  * returns an unique identifier for it.
@@ -34,36 +20,36 @@ typedef struct Node {
 } Node;
 
 /**
- * BinaryTree struct
+ * \brief Binary search tree struct
  */
 typedef struct {
-    BSTree_Identifier identifier;
-    BSTree_Remover remover;
+    instance_identify identify;
+    instance_drop drop;
     Node *root;
 } BSTree;
 
 /**
- * Creates a new BSTree.
+ * \brief Creates a new BSTree.
  */
-BSTree *BSTree_new(BSTree_Identifier, BSTree_Remover);
+BSTree *BSTree_new(instance_identify, instance_drop);
 
 /**
- * Pushes data into BSTree.
+ * \brief Pushes data into BSTree.
  */
 char BSTree_push(BSTree *, void *instance);
 
 /**
- * Gets data from BSTree.
+ * \brief Gets data from BSTree.
  */
 void *BSTree_get(const BSTree *, const char *id);
 
 /**
- * Removes instance by its id.
+ * \brief Removes instance by its id.
  */
 int BSTree_remove(BSTree *, const char *id);
 
 /**
- * Check whether identifier contained in the BSTree.
+ * \brief Check whether identifier contained in the BSTree.
  */
 int BSTree_contains(const BSTree *, const char *id);
 

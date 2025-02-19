@@ -1,5 +1,5 @@
-this project currently unfinished. it is not recommended to use any code of
-the project due to possible stability problems. no api is well-tested or 
+this project currently unfinished. it is not recommended to use any code from
+the project due to potential stability problems. no api has been well-tested or 
 stabilized yet.
 
 # chat server

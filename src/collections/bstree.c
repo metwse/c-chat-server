@@ -3,11 +3,12 @@
 #include <stdlib.h>
 #include <string.h>
 
-BSTree *BSTree_new(BSTree_Identifier identifier, BSTree_Remover remover) {
+
+BSTree *BSTree_new(instance_identify identify, instance_drop drop) {
     BSTree *bt = malloc(sizeof(BSTree));
     bt->root = NULL;
-    bt->identifier = identifier;
-    bt->remover = remover;
+    bt->identify = identify;
+    bt->drop = drop;
 
     return bt;
 }
@@ -22,7 +23,7 @@ Node *Node_new(void *instance) {
 }
 
 char BSTree_push(BSTree *bt, void *instance) {
-    const char *id = bt->identifier(instance);
+    const char *id = bt->identify(instance);
     int idLen = strlen(id);
     if (idLen == 0) return 0;
 
@@ -35,7 +36,7 @@ char BSTree_push(BSTree *bt, void *instance) {
 
     Node *currentNode = bt->root;
     while (1) {
-        const char *nodeId = bt->identifier(currentNode->instance);
+        const char *nodeId = bt->identify(currentNode->instance);
         int cmp = strcmp(nodeId, id);
 
         if (cmp < 0) {
@@ -62,7 +63,7 @@ void *BSTree_get(const BSTree *bt, const char *id) {
 
     Node *currentNode = bt->root;
     while (1) {
-        const char *nodeId = bt->identifier(currentNode->instance);
+        const char *nodeId = bt->identify(currentNode->instance);
         int cmp = strcmp(nodeId, id);
 
         if (cmp == 0) return currentNode->instance;
@@ -80,43 +81,50 @@ int BSTree_remove(BSTree *bt, const char *id) {
     if (!bt->root) return 0;
 
     Node *parent = NULL;
-    char parentDirection = 0;
+    int parentDirection = 0;
     Node *currentNode = bt->root;
     while (1) {
-        const char *nodeId = bt->identifier(currentNode->instance);
+        const char *nodeId = bt->identify(currentNode->instance);
         int cmp = strcmp(nodeId, id);
 
         if (cmp == 0)  break;
-
         parent = currentNode;
-        parentDirection = cmp > 0; 
-        if (cmp < 0 && currentNode->lt) currentNode = currentNode->lt; 
-        else if (cmp > 0 && currentNode->gt) currentNode = currentNode->gt;
+
+        if (cmp < 0 && currentNode->lt) {
+            currentNode = currentNode->lt;
+            parentDirection = 0;
+        } 
+        else if (cmp > 0 && currentNode->gt) {
+            currentNode = currentNode->gt;
+            parentDirection = 1;
+        }
         else return 0;
     }
 
     if (currentNode->lt && currentNode->gt) {
         Node *successorParent = currentNode;
         Node *successor = currentNode->gt;
+        int parentDirection = 1;
         while (successor->lt) {
+            parentDirection = 0;
             successorParent = successor;
             successor = successor->lt;
         }
-        bt->remover(currentNode->instance);
+        bt->drop(currentNode->instance);
         currentNode->instance = successor->instance;
-        if (successor->gt)
-            successorParent->lt = successor->gt;
+        if (parentDirection) successorParent->gt = successor->gt;
+        else successorParent->lt = successor->gt;
         free(successor);
         return 1;
     } 
     
     Node *overwritingNode = currentNode->lt ? currentNode->lt : currentNode->gt;
-    bt->remover(currentNode->instance);
-
-    if (parent) {
+    if (parent) 
         if (parentDirection) parent->gt = overwritingNode;
         else parent->lt = overwritingNode;
-    } else bt->root = overwritingNode;
+    else bt->root = overwritingNode;
+    bt->drop(currentNode->instance);
+    free(currentNode);
 
     return 1;
 }
