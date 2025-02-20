@@ -1,5 +1,5 @@
 /*! 
- * `LinkedList` implements basic methods of linked list struct.
+ * `LinkedList` implements basic methods of linked list data structure.
  */
 
 #ifndef COLLECTIONS_LINKED_LIST

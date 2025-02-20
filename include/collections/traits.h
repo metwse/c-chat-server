@@ -9,10 +9,20 @@
 typedef const char* (*instance_identify)(void const *instance);
 
 /**
- * \biref Remover type alias as a trait
+ * \biref Drop type alias as a trait
  *
  * A function pointer that frees the memory allocated to the instance.
  */
 typedef void (*instance_drop)(void *instance);
+
+/**
+ * \biref Ordering type alias as a trait
+ *
+ * Compares two instances.
+ *
+ * @return positive integer if instance1 is greater, 0 if both of the instances 
+ *         are equal or negative integer if instance2 is greater.
+ */
+typedef int (*instance_ordering)(void *instance1, void *instance2);
 
 #endif // !COLLECTIONS_TRAITS_H

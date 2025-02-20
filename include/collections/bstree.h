@@ -1,5 +1,5 @@
 /*! 
- * `BSTree` implements basic methods of binary search tree struct.
+ * `BSTree` implements basic methods of binary search tree data structure.
  */
 
 #ifndef COLLECTIONS_BSTREE_H
