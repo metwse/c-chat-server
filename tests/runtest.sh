@@ -8,5 +8,5 @@ gcc -std=c99 -g \
     -o $tmp_executable -lm
 if [[ $? -eq 0 ]]; then
     echo "executing: $tmp_executable"
-    $tmp_executable
+    gdb -q $tmp_executable
 fi
