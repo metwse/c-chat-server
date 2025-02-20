@@ -44,9 +44,14 @@ char BSTree_push(BSTree *, void *instance);
 void *BSTree_get(const BSTree *, const char *id);
 
 /**
- * \brief Removes instance by its id.
+ * \brief Removes instance from the tree by its id.
  */
 char BSTree_remove(BSTree *, const char *id);
+
+/**
+ * \brief Removes and clears instance tree by its id.
+ */
+char BSTree_delete(BSTree *, const char *id);
 
 /**
  * \brief Check whether identifier contained in the BSTree.

@@ -21,26 +21,25 @@ int main() {
          memcpy(sameIdentifiers[i], identifiers[i], 24);
     }
 
-    printf("testing: BSTree_push\n");
+    printf("test: BSTree_push\n");
     for(int i = 0; i < 16; i++)
         assert(BSTree_push(bt, Collectable_new(identifiers[i])));
 
-    printf("testing: BSTree_contains\n");
+    printf("test: BSTree_contains\n");
     for(int i = 0; i < 16; i++) 
         assert(BSTree_contains(bt, identifiers[i]));
 
-    printf("testing: BSTree_remove\n");
+    printf("test: BSTree_remove\n");
     for(int i = 0; i < 16; i++)
         assert(BSTree_remove(bt, identifiers[i]));
 
-    printf("testing: BSTree_contains after removing tree's elements\n");
+    printf("test: BSTree_contains after removing tree's elements\n");
     for(int i = 0; i < 16; i++) 
         assert(!BSTree_contains(bt, sameIdentifiers[i]));
 
-    printf("testing: BSTree_push using the same identifiers as previous push\n");
+    printf("test: BSTree_push using the same identifiers as previous push\n");
     for(int i = 0; i < 16; i++)
         assert(BSTree_push(bt, Collectable_new(sameIdentifiers[i])));
-
 
     return 0;
 }
