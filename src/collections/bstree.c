@@ -22,6 +22,22 @@ BSTree_Node *Node_new(void *instance) {
     return node;
 }
 
+void _recursiveDrop(BSTree_Node *node, instance_drop drop) {
+    if (node->gt) _recursiveDrop(node->gt, drop);
+    if (node->lt) _recursiveDrop(node->lt, drop);
+    if (drop) drop(node->instance);
+}
+
+void BSTree_drop(BSTree *bt) {
+    _recursiveDrop(bt->root, NULL);
+    free(bt);
+}
+
+void BSTree_clear(BSTree *bt) {
+    _recursiveDrop(bt->root, bt->drop);
+    free(bt);
+}
+
 char BSTree_push(BSTree *bt, void *instance) {
     const char *id = bt->identify(instance);
     int idLen = strlen(id);
@@ -74,11 +90,11 @@ void *BSTree_get(const BSTree *bt, const char *id) {
     }
 }
 
-char BSTree_remove(BSTree *bt, const char *id) {
+void *BSTree_remove(BSTree *bt, const char *id) {
     int idLen = strlen(id);
-    if (idLen == 0) return 0;
+    if (idLen == 0) return NULL;
 
-    if (!bt->root) return 0;
+    if (!bt->root) return NULL;
 
     BSTree_Node *parent = NULL;
     int parentDirection = 0;
@@ -110,12 +126,13 @@ char BSTree_remove(BSTree *bt, const char *id) {
             successorParent = successor;
             successor = successor->lt;
         }
-        bt->drop(currentNode->instance);
+        void *instance = currentNode->instance;
         currentNode->instance = successor->instance;
         if (parentDirection) successorParent->gt = successor->gt;
         else successorParent->lt = successor->gt;
         free(successor);
-        return 1;
+
+        return instance;
     } 
     
     BSTree_Node *overwritingNode = currentNode->lt ? currentNode->lt : currentNode->gt;
@@ -123,10 +140,16 @@ char BSTree_remove(BSTree *bt, const char *id) {
         if (parentDirection) parent->gt = overwritingNode;
         else parent->lt = overwritingNode;
     else bt->root = overwritingNode;
-    bt->drop(currentNode->instance);
+    void *instance = currentNode->instance;
     free(currentNode);
 
-    return 1;
+    return instance;
+}
+
+char BSTree_delete(BSTree *bt, const char *id) {
+    void *instance = BSTree_remove(bt, id);
+    if (instance) bt->drop(instance);
+    return !!instance;
 }
 
 char BSTree_contains(const BSTree *bt, const char *id) {

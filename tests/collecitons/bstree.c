@@ -41,5 +41,18 @@ int main() {
     for(int i = 0; i < 16; i++)
         assert(BSTree_push(bt, Collectable_new(sameIdentifiers[i])));
 
+    printf("test: BSTree_drop and reinitializing anohter tree with the same identifiers\n");
+    BSTree_drop(bt);
+    bt = BSTree_new(Collectable_identify, Collectable_drop);
+    for(int i = 0; i < 16; i++)
+        assert(BSTree_push(bt, Collectable_new(sameIdentifiers[i])));
+
+    printf("test: Check if new the reinitialized tree contains identifiers\n");
+    for(int i = 0; i < 16; i++) 
+        assert(BSTree_contains(bt, identifiers[i]));
+
+    printf("test: BSTree_clear\n");
+    BSTree_clear(bt);
+
     return 0;
 }

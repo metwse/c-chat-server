@@ -34,6 +34,16 @@ typedef struct {
 BSTree *BSTree_new(instance_identify, instance_drop);
 
 /**
+ * \brief Keeping its instances, drops the tree.
+ */
+void BSTree_drop(BSTree *);
+
+/**
+ * \brief Drops the tree freeing its instances.
+ */
+void BSTree_clear(BSTree *);
+
+/**
  * \brief Pushes data into BSTree.
  */
 char BSTree_push(BSTree *, void *instance);
@@ -46,7 +56,7 @@ void *BSTree_get(const BSTree *, const char *id);
 /**
  * \brief Removes instance from the tree by its id.
  */
-char BSTree_remove(BSTree *, const char *id);
+void *BSTree_remove(BSTree *, const char *id);
 
 /**
  * \brief Removes and clears instance tree by its id.
