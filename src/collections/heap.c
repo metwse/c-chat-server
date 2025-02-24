@@ -4,17 +4,9 @@
 #include <string.h>
 
 
-unsigned int parentOf(unsigned i) {
-    return (i - 1) / 2;
-}
-
-unsigned int leftOf(unsigned i) {
-    return i * 2 + 1;
-}
-
-unsigned int rightOf(unsigned i) {
-    return i * 2 + 2;
-}
+unsigned int parentOf(unsigned i) { return (i - 1) / 2; }
+unsigned int leftOf(unsigned i) { return i * 2 + 1; }
+unsigned int rightOf(unsigned i) { return i * 2 + 2; }
 
 Heap *Heap_withCapacity(instance_ordering ordering, instance_drop drop, unsigned int capacity) {
     if (capacity < 1) return NULL;
@@ -32,6 +24,17 @@ Heap *Heap_withCapacity(instance_ordering ordering, instance_drop drop, unsigned
 
 Heap *Heap_new(instance_ordering ordering, instance_drop drop) {
     return Heap_withCapacity(ordering, drop, 1);
+}
+
+void Heap_drop(Heap *h) {
+    free(h->instances);
+    free(h);
+}
+
+void Heap_clear(Heap *h) {
+    h->length++;
+    while (h->length--) free(h->instances[h->length]);
+    Heap_drop(h);
 }
 
 char Heap_resize(Heap *h, unsigned int size) {
@@ -102,4 +105,10 @@ void *Heap_extractRoot(Heap *h) {
     }
 
     return root;
+}
+
+char Heap_deleteRoot(Heap *h) {
+    void *instance = Heap_extractRoot(h);
+    if (instance) h->drop(instance);
+    return !!instance;
 }
