@@ -19,6 +19,11 @@ Collectable *Collectable_new(char *);
 const char *Collectable_identify(void const *collectable);
 
 /**
+ * Compares two instances of collectables.
+ */
+int Collectable_ordering(void const *collectable1, void const *collectable2);
+
+/**
  * Freeing the id field, drops Collectable.
  */
 void Collectable_drop(void *collectable);

@@ -6,7 +6,7 @@
  *
  * A function pointer that returns unique id for given instance.
  */
-typedef const char* (*instance_identify)(void const *instance);
+typedef const char * (*instance_identify)(void const *instance);
 
 /**
  * \biref Drop type alias as a trait
@@ -23,6 +23,6 @@ typedef void (*instance_drop)(void *instance);
  * @return positive integer if instance1 is greater, 0 if both of the instances 
  *         are equal or negative integer if instance2 is greater.
  */
-typedef int (*instance_ordering)(void *instance1, void *instance2);
+typedef int (*instance_ordering)(void const *instance1, void const *instance2);
 
 #endif // !COLLECTIONS_TRAITS_H

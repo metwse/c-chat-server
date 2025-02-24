@@ -48,12 +48,12 @@ char Heap_insert(Heap *, void *instance);
 /**
  * \brief Extracts root of the heap.
  */
-void *Heap_extract(Heap *);
+void *Heap_extractRoot(Heap *);
 
 /**
  * \brief Extracts and clears root of the heap.
  */
-char Heap_shift(Heap *);
+char Heap_deleteRoot(Heap *);
 
 /**
  * \brief Resizes the heap. Removes elements if necessary.
@@ -61,7 +61,8 @@ char Heap_shift(Heap *);
 char Heap_resize(Heap *, unsigned size);
 
 /**
- * \brief Resizes the heap. Removes  and clears instances if necessary.
+ * \brief Resizes the heap. Removes and clears instances if they cannot fit
+ * into the resized heap.
  */
 char Heap_resizeByFreeing(Heap *, unsigned size);
 
