@@ -1,69 +1,72 @@
 /*!
- * `Heap` implements basic methods of heap data structure.
+ * `struct heap` implements basic methods of heap data structure.
  */
 
 #ifndef COLLECTIONS_HEAP_H
 #define COLLECTIONS_HEAP_H
 
+#include <stddef.h>
+#include <stdbool.h>
 #include "traits.h"
 
 /**
- * \brief Heap struct
+ * \brief heap struct
  *
  * Implements basic heap methods.
  */
-typedef struct {
+struct heap {
     instance_ordering ordering;
     instance_drop drop;
     void **instances;
-    unsigned length;
-    unsigned capacity;
-} Heap;
+    size_t length;
+    size_t capacity;
+};
 
 /**
  * \brief Creates a new Heap.
  */
-Heap *Heap_new(instance_ordering, instance_drop); 
+struct heap *heap_new(instance_ordering, instance_drop); 
 
 /**
  * \brief Creates a new Heap with given capacity.
  */
-Heap *Heap_withCapacity(instance_ordering, instance_drop, unsigned capacity); 
+struct heap *heap_with_capacity(instance_ordering, instance_drop,
+                                size_t capacity); 
 
 /**
  * \brief Keeping its instances, drops the heap.
  */
-void Heap_drop(Heap *);
+void heap_drop(struct heap *);
 
 /**
  * \brief Drops the heap freeing its instances.
  */
-void Heap_clear(Heap *);
+void heap_clear(struct heap *);
 
 /**
  * \brief Inserts the data into the heap.
  */
-char Heap_insert(Heap *, void *instance); 
+bool heap_insert(struct heap *, void *instance); 
 
 /**
  * \brief Extracts root of the heap.
  */
-void *Heap_extractRoot(Heap *);
+void *heap_extract_root(struct heap *);
 
 /**
  * \brief Extracts and clears root of the heap.
  */
-char Heap_deleteRoot(Heap *);
+bool heap_delete_root(struct heap *);
 
 /**
  * \brief Resizes the heap. Removes elements if necessary.
  */
-char Heap_resize(Heap *, unsigned size);
+bool heap_resize(struct heap *, size_t size);
 
 /**
  * \brief Resizes the heap. Removes and clears instances if they cannot fit
  * into the resized heap.
  */
-char Heap_resizeByFreeing(Heap *, unsigned size);
+bool heap_resize_by_freeing(struct heap *, size_t size);
 
 #endif // !COLLECTIONS_HEAP_H
