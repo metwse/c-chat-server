@@ -1,4 +1,4 @@
-#include "../../include/collections/linkedlist.h"
+#include "../../include/collections/linked_list.h"
 #include "../testutils/collections.h"
 
 #include <assert.h>

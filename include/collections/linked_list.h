@@ -47,6 +47,11 @@ void linked_list_drop(struct linked_list *);
 void linked_list_clear(struct linked_list *);
 
 /**
+ * \brief Inserts an element into LinkedList.
+ */
+bool linked_list_insert(struct linked_list *, void *element, size_t index);
+
+/**
  * \brief Pushes an element into LinkedList.
  */
 void linked_list_push(struct linked_list *, void *element);
