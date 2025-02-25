@@ -24,6 +24,7 @@ struct bstree_node {
  * \brief Binary search tree struct
  */
 struct bstree {
+    instance_ordering ordering;
     instance_identify identify;
     instance_drop drop;
     struct bstree_node *root;
@@ -32,7 +33,7 @@ struct bstree {
 /**
  * \brief Creates a new bstree.
  */
-struct bstree *bstree_new(instance_identify, instance_drop);
+struct bstree *bstree_new(instance_ordering, instance_identify, instance_drop);
 
 /**
  * \brief Keeping its instances, drops the tree.

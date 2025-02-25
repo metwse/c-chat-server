@@ -10,7 +10,9 @@
 
 
 int main() {
-    struct bstree *bt = bstree_new(Collectable_identify, Collectable_drop);
+    struct bstree *bt = bstree_new(test_collectable_ordering,
+                                   test_collectable_identify,
+                                   test_collectable_drop);
     
     srand(time(NULL));
     char **identifiers = gen_identifiers(16);
@@ -23,7 +25,7 @@ int main() {
 
     printf("test: bstree_push\n");
     for(int i = 0; i < 16; i++)
-        assert(bstree_push(bt, Collectable_new(identifiers[i])));
+        assert(bstree_push(bt, test_collectable_new(identifiers[i])));
 
     printf("test: bstree_contains\n");
     for(int i = 0; i < 16; i++) 
@@ -39,14 +41,16 @@ int main() {
 
     printf("test: bstree_push using the same identifiers as previous push\n");
     for(int i = 0; i < 16; i++)
-        assert(bstree_push(bt, Collectable_new(same_identifiers[i])));
+        assert(bstree_push(bt, test_collectable_new(same_identifiers[i])));
 
     printf("test: bstree_drop and reinitializing anohter tree with the same "
            "identifiers\n");
     bstree_drop(bt);
-    bt = bstree_new(Collectable_identify, Collectable_drop);
+    bt = bstree_new(test_collectable_ordering,
+                    test_collectable_identify,
+                    test_collectable_drop);
     for(int i = 0; i < 16; i++)
-        assert(bstree_push(bt, Collectable_new(same_identifiers[i])));
+        assert(bstree_push(bt, test_collectable_new(same_identifiers[i])));
 
     printf("test: Check if new the reinitialized tree contains identifiers\n");
     for(int i = 0; i < 16; i++) 

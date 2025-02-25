@@ -18,10 +18,13 @@ void __bstree_recursive_drop(struct bstree_node *node, instance_drop drop)
 }
 
 
-struct bstree *bstree_new(instance_identify identify, instance_drop drop)
+struct bstree *bstree_new(instance_ordering ordering,
+                          instance_identify identify,
+                          instance_drop drop)
 {
     struct bstree *bt = malloc(sizeof(struct bstree));
     bt->root = NULL;
+    bt->ordering = ordering;
     bt->identify = identify;
     bt->drop = drop;
 
@@ -42,9 +45,9 @@ void bstree_clear(struct bstree *bt)
 
 bool bstree_push(struct bstree *bt, void *instance)
 {
-    const char *id = bt->identify(instance);
-    int id_len = strlen(id);
-    if (id_len == 0) return false;
+    // const char *id = bt->identify(instance);
+    // int id_len = strlen(id);
+    // if (id_len == 0) return false;
 
     #define CREATE_NODE(var) { \
         var = malloc(sizeof(struct bstree_node)); \
@@ -59,8 +62,7 @@ bool bstree_push(struct bstree *bt, void *instance)
 
     struct bstree_node *node = bt->root;
     while (true) {
-        const char *node_id = bt->identify(node->instance);
-        int cmp = strcmp(node_id, id);
+        int cmp = bt->ordering(node->instance, instance);
 
         if (cmp < 0) {
             if (!node->lt)

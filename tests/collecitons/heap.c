@@ -8,7 +8,7 @@
 
 
 int main() {
-    struct heap *h = heap_new(Collectable_ordering, Collectable_drop);
+    struct heap *h = heap_new(test_collectable_ordering, test_collectable_drop);
 
     char **identifiers = calloc(sizeof(char *), 4);
 
@@ -19,15 +19,15 @@ int main() {
 
     printf("test: insert");
     for (uint8_t i = 0; i < 4; i++)
-        heap_insert(h, Collectable_new(identifiers[i]));
+        heap_insert(h, test_collectable_new(identifiers[i]));
 
     printf("test: extract");
     for (uint8_t i = 0; i < 4; i++)
-        assert(((Collectable *) heap_extract_root(h))->id == identifiers[3 - i]);
+        assert(((struct test_collectable *) heap_extract_root(h))->id == identifiers[3 - i]);
 
     printf("test: deleteRoot");
     for (uint8_t i = 0; i < 4; i++)
-        heap_insert(h, Collectable_new(identifiers[i]));
+        heap_insert(h, test_collectable_new(identifiers[i]));
 
     for (uint8_t i = 0; i < 4; i++) assert(heap_delete_root(h));
 

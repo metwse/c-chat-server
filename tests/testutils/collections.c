@@ -3,23 +3,23 @@
 #include <string.h>
 
 
-Collectable *Collectable_new(char *id) {
-    Collectable *c = malloc(sizeof(Collectable));
+struct test_collectable *test_collectable_new(char *id) {
+    struct test_collectable *c = malloc(sizeof(struct test_collectable));
     c->id = id;
 
     return c;
 }
 
-const char *Collectable_identify(void const *collectable) {
-    return ((Collectable*) collectable)->id;
+const char *test_collectable_identify(void const *test_collectable) {
+    return ((struct test_collectable *) test_collectable)->id;
 }
 
-void Collectable_drop(void *collectable) {
-    free(((Collectable*) collectable)->id);
-    free(collectable);
+void test_collectable_drop(void *test_collectable) {
+    free(((struct test_collectable *) test_collectable)->id);
+    free(test_collectable);
 }
 
-int Collectable_ordering(void const *collectable1, void const *collectable2) {
-    return strcmp(((Collectable*) collectable1)->id,
-                  ((Collectable*) collectable2)->id);
+int test_collectable_ordering(void const *test_collectable1, void const *test_collectable2) {
+    return strcmp(((struct test_collectable *) test_collectable1)->id,
+                  ((struct test_collectable *) test_collectable2)->id);
 }
