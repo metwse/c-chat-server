@@ -14,11 +14,11 @@ int main() {
     
     srand(time(NULL));
     char **identifiers = gen_identifiers(16);
-    char **sameIdentifiers = calloc(sizeof(char *), 16);
+    char **same_identifiers = calloc(sizeof(char *), 16);
 
     for (int i = 0; i < 16; i++) {
-         sameIdentifiers[i] = calloc(24, 1);
-         memcpy(sameIdentifiers[i], identifiers[i], 24);
+         same_identifiers[i] = calloc(24, 1);
+         memcpy(same_identifiers[i], identifiers[i], 24);
     }
 
     printf("test: bstree_push\n");
@@ -35,17 +35,18 @@ int main() {
 
     printf("test: bstree_contains after removing tree's elements\n");
     for(int i = 0; i < 16; i++) 
-        assert(!bstree_contains(bt, sameIdentifiers[i]));
+        assert(!bstree_contains(bt, same_identifiers[i]));
 
     printf("test: bstree_push using the same identifiers as previous push\n");
     for(int i = 0; i < 16; i++)
-        assert(bstree_push(bt, Collectable_new(sameIdentifiers[i])));
+        assert(bstree_push(bt, Collectable_new(same_identifiers[i])));
 
-    printf("test: bstree_drop and reinitializing anohter tree with the same identifiers\n");
+    printf("test: bstree_drop and reinitializing anohter tree with the same "
+           "identifiers\n");
     bstree_drop(bt);
     bt = bstree_new(Collectable_identify, Collectable_drop);
     for(int i = 0; i < 16; i++)
-        assert(bstree_push(bt, Collectable_new(sameIdentifiers[i])));
+        assert(bstree_push(bt, Collectable_new(same_identifiers[i])));
 
     printf("test: Check if new the reinitialized tree contains identifiers\n");
     for(int i = 0; i < 16; i++) 

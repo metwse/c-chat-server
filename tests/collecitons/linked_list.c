@@ -8,7 +8,8 @@
 
 
 int main() {
-    struct linked_list *ll = linked_list_new(Collectable_identify, Collectable_drop);
+    struct linked_list *ll = 
+        linked_list_new(Collectable_identify, Collectable_drop);
 
     char **identifiers = calloc((sizeof(char *)), 16);
 
@@ -55,7 +56,8 @@ int main() {
     printf("test: drop\n");
     linked_list_drop(ll);
 
-    printf("test: reinitializing a linkedlist using previously dropped list's elements\n");
+    printf("test: reinitializing a linkedlist using previously dropped list's "
+           "elements\n");
     ll = linked_list_new(Collectable_identify, Collectable_drop);
 
     identifiers[1] = (char *) malloc(sizeof(char) * 3);
@@ -63,9 +65,12 @@ int main() {
     strcpy(identifiers[1], "1");
     strcpy(identifiers[3], "3");
 
-    for (int i = 0; i < 16; i++) linked_list_push(ll, Collectable_new(identifiers[i]));
+    for (int i = 0; i < 16; i++) 
+        linked_list_push(ll, Collectable_new(identifiers[i]));
 
-    assert(!strcmp(Collectable_identify(((Collectable *) linked_list_get(ll, 0))), "0"));
+    assert(!strcmp(
+        Collectable_identify(((Collectable *) linked_list_get(ll, 0))), "0"
+    ));
 
     printf("test: clear\n");
     linked_list_clear(ll);

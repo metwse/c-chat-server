@@ -7,17 +7,8 @@
 #include <string.h>
 
 
-struct bstree *bstree_new(instance_identify identify, instance_drop drop) {
-    struct bstree *bt = malloc(sizeof(struct bstree));
-    bt->root = NULL;
-    bt->identify = identify;
-    bt->drop = drop;
-
-    return bt;
-}
-
-
-void __bstree_recursive_drop(struct bstree_node *node, instance_drop drop) {
+void __bstree_recursive_drop(struct bstree_node *node, instance_drop drop)
+{
     if (node->gt) 
         __bstree_recursive_drop(node->gt, drop);
     if (node->lt) 
@@ -26,17 +17,31 @@ void __bstree_recursive_drop(struct bstree_node *node, instance_drop drop) {
         drop(node->instance);
 }
 
-void bstree_drop(struct bstree *bt) {
+
+struct bstree *bstree_new(instance_identify identify, instance_drop drop)
+{
+    struct bstree *bt = malloc(sizeof(struct bstree));
+    bt->root = NULL;
+    bt->identify = identify;
+    bt->drop = drop;
+
+    return bt;
+}
+
+void bstree_drop(struct bstree *bt)
+{
     __bstree_recursive_drop(bt->root, NULL);
     free(bt);
 }
 
-void bstree_clear(struct bstree *bt) {
+void bstree_clear(struct bstree *bt)
+{
     __bstree_recursive_drop(bt->root, bt->drop);
     free(bt);
 }
 
-bool bstree_push(struct bstree *bt, void *instance) {
+bool bstree_push(struct bstree *bt, void *instance)
+{
     const char *id = bt->identify(instance);
     int id_len = strlen(id);
     if (id_len == 0) return false;
@@ -70,7 +75,8 @@ bool bstree_push(struct bstree *bt, void *instance) {
     }
 }
 
-void *bstree_get(const struct bstree *bt, const char *id) {
+void *bstree_get(const struct bstree *bt, const char *id)
+{
     int id_len = strlen(id);
     if (!id_len) 
         return NULL;
@@ -95,7 +101,8 @@ void *bstree_get(const struct bstree *bt, const char *id) {
     }
 }
 
-void *bstree_remove(struct bstree *bt, const char *id) {
+void *bstree_remove(struct bstree *bt, const char *id)
+{
     int id_len = strlen(id);
     if (id_len == 0)
         return NULL;
@@ -167,7 +174,8 @@ void *bstree_remove(struct bstree *bt, const char *id) {
     return instance;
 }
 
-bool bstree_delete(struct bstree *bt, const char *id) {
+bool bstree_delete(struct bstree *bt, const char *id)
+{
     void *instance = bstree_remove(bt, id);
     if (instance) 
         bt->drop(instance);
@@ -175,6 +183,7 @@ bool bstree_delete(struct bstree *bt, const char *id) {
     return !!instance;
 }
 
-bool bstree_contains(const struct bstree *bt, const char *id) {
+bool bstree_contains(const struct bstree *bt, const char *id)
+{
     return !!bstree_get(bt, id);
 }

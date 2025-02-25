@@ -81,14 +81,18 @@ bool heap_insert(struct heap *h, void *instance)
     h->instances[h->length] = instance;
 
     size_t i = h->length;
-    void *currentNode = instance;
+    void *node = instance;
+
     while (i) {
         size_t parent = PARENT_INDEX(i);
-        void *parentNode = h->instances[parent];
-        if (h->ordering(parentNode, currentNode) > 0) {
-            h->instances[parent] = currentNode;
-            h->instances[i] = parentNode;
-        } else break;
+        void *parent_node = h->instances[parent];
+
+        if (h->ordering(parent_node, node) > 0) {
+            h->instances[parent] = node;
+            h->instances[i] = parent_node;
+        } else 
+            break;
+
         i = parent;
     }
 
@@ -99,7 +103,8 @@ bool heap_insert(struct heap *h, void *instance)
 
 void *heap_extract_root(struct heap *h) 
 {
-    if (!h->length) return NULL;
+    if (!h->length)
+        return NULL;
     
     void *root = h->instances[0];
     h->instances[0] = h->instances[h->length - 1];
@@ -107,16 +112,21 @@ void *heap_extract_root(struct heap *h)
     h->length--;
 
     size_t i = 0;
-    void *currentNode = h->instances[0];
+    void *node = h->instances[0];
+
     while (i < h->length) {
         size_t left = LEFT_INDEX(i);
-        if (left >= h->length) break;
-        void *leftNode = h->instances[left];
+        if (left >= h->length) 
+            break;
+
+        void *left_node = h->instances[left];
         
-        if (h->ordering(leftNode, currentNode) < 0) {
-            h->instances[i] = leftNode;
-            h->instances[left] = currentNode;
-        } else break;
+        if (h->ordering(left_node, node) < 0) {
+            h->instances[i] = left_node;
+            h->instances[left] = node;
+        } else 
+            break;
+
         i = left;
     }
 
@@ -126,6 +136,8 @@ void *heap_extract_root(struct heap *h)
 bool heap_delete_root(struct heap *h) 
 {
     void *instance = heap_extract_root(h);
-    if (instance) h->drop(instance);
+
+    if (instance) 
+        h->drop(instance);
     return !!instance;
 }

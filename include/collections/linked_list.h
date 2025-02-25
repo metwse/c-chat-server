@@ -32,7 +32,7 @@ struct linked_list {
 };
 
 /**
- * \brief Creates a new LinkedList.
+ * \brief Creates a new linked list.
  */
 struct linked_list *linked_list_new(instance_identify, instance_drop);
 
@@ -47,12 +47,12 @@ void linked_list_drop(struct linked_list *);
 void linked_list_clear(struct linked_list *);
 
 /**
- * \brief Inserts an element into LinkedList.
+ * \brief Inserts an element into linked list.
  */
 bool linked_list_insert(struct linked_list *, void *element, size_t index);
 
 /**
- * \brief Pushes an element into LinkedList.
+ * \brief Pushes an element into linked list.
  */
 void linked_list_push(struct linked_list *, void *element);
 
@@ -67,7 +67,7 @@ void linked_list_unshift(struct linked_list *, void *element);
 void *linked_list_get(const struct linked_list *, size_t index);
 
 /**
- * \brief Gets data from LinkedList by its id.
+ * \brief Gets data from linked list by its id.
  */
 void *linked_list_get_by_id(const struct linked_list *, char const *id);
 

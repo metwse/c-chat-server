@@ -2,30 +2,31 @@
 #define TESTUTILS_COLLECTIONS_H
 
 /**
- * Sample struct that implements tratis for collections.
+ * Sample struct that implements tratis of collections.
  */
-typedef struct Collectable {
+struct test_collectable {
     char *id;
-} Collectable;
+};
 
 /**
- * Creates a new Collectable.
+ * Creates a new test collectable.
  */
-Collectable *Collectable_new(char *);
+struct test_collectable *test_collectable_new(char *);
 
 /**
  * Returns id of the Collectable.
  */
-const char *Collectable_identify(void const *collectable);
+const char *test_collectable_identify(void const *collectable);
 
 /**
  * Compares two instances of collectables.
  */
-int Collectable_ordering(void const *collectable1, void const *collectable2);
+int test_collectable_ordering(void const *collectable1,
+                              void const *collectable2);
 
 /**
  * Freeing the id field, drops Collectable.
  */
-void Collectable_drop(void *collectable);
+void test_collectable_drop(void *collectable);
 
 #endif // !TESTUTILS_COLLECTIONS_H
