@@ -6,7 +6,7 @@
  *
  * A function pointer that returns unique id for given instance.
  */
-typedef const char * (*instance_identify)(void const *instance);
+typedef const char *(*instance_identify)(void const *instance);
 
 /**
  * \biref Drop type alias as a trait

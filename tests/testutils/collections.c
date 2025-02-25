@@ -20,5 +20,6 @@ void Collectable_drop(void *collectable) {
 }
 
 int Collectable_ordering(void const *collectable1, void const *collectable2) {
-    return strcmp(((Collectable*) collectable1)->id, ((Collectable*) collectable2)->id);
+    return strcmp(((Collectable*) collectable1)->id,
+                  ((Collectable*) collectable2)->id);
 }

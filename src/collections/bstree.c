@@ -1,11 +1,26 @@
 #include "../../include/collections/bstree.h"
 
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-BSTree *BSTree_new(instance_identify identify, instance_drop drop) {
-    BSTree *bt = malloc(sizeof(BSTree));
+void __bstree_recursive_drop(struct bstree_node *node, instance_drop drop)
+{
+    if (node->gt) 
+        __bstree_recursive_drop(node->gt, drop);
+    if (node->lt) 
+        __bstree_recursive_drop(node->lt, drop);
+    if (drop) 
+        drop(node->instance);
+}
+
+
+struct bstree *bstree_new(instance_identify identify, instance_drop drop)
+{
+    struct bstree *bt = malloc(sizeof(struct bstree));
     bt->root = NULL;
     bt->identify = identify;
     bt->drop = drop;
@@ -13,145 +28,162 @@ BSTree *BSTree_new(instance_identify identify, instance_drop drop) {
     return bt;
 }
 
-BSTree_Node *Node_new(void *instance) {
-    BSTree_Node *node = malloc(sizeof(BSTree_Node));
-    node->gt = NULL;
-    node->lt = NULL;
-    node->instance = instance;
-
-    return node;
-}
-
-void _recursiveDrop(BSTree_Node *node, instance_drop drop) {
-    if (node->gt) _recursiveDrop(node->gt, drop);
-    if (node->lt) _recursiveDrop(node->lt, drop);
-    if (drop) drop(node->instance);
-}
-
-void BSTree_drop(BSTree *bt) {
-    _recursiveDrop(bt->root, NULL);
+void bstree_drop(struct bstree *bt)
+{
+    __bstree_recursive_drop(bt->root, NULL);
     free(bt);
 }
 
-void BSTree_clear(BSTree *bt) {
-    _recursiveDrop(bt->root, bt->drop);
+void bstree_clear(struct bstree *bt)
+{
+    __bstree_recursive_drop(bt->root, bt->drop);
     free(bt);
 }
 
-char BSTree_push(BSTree *bt, void *instance) {
+bool bstree_push(struct bstree *bt, void *instance)
+{
     const char *id = bt->identify(instance);
-    int idLen = strlen(id);
-    if (idLen == 0) return 0;
+    int id_len = strlen(id);
+    if (id_len == 0) return false;
 
-    BSTree_Node *createdNode = Node_new(instance);
-
-    if (!bt->root) {
-        bt->root = createdNode;
-        return 1;
+    #define CREATE_NODE(var) { \
+        var = malloc(sizeof(struct bstree_node)); \
+        var->gt = NULL; \
+        var->lt = NULL; \
+        var->instance = instance; \
+        return true; \
     }
 
-    BSTree_Node *currentNode = bt->root;
-    while (1) {
-        const char *nodeId = bt->identify(currentNode->instance);
-        int cmp = strcmp(nodeId, id);
+    if (!bt->root)
+        CREATE_NODE(bt->root);
+
+    struct bstree_node *node = bt->root;
+    while (true) {
+        const char *node_id = bt->identify(node->instance);
+        int cmp = strcmp(node_id, id);
 
         if (cmp < 0) {
-            if (!currentNode->lt) {
-                currentNode->lt = createdNode;
-                return 1;
-            }
-            currentNode = currentNode->lt;
+            if (!node->lt)
+                CREATE_NODE(node->lt);
+            node = node->lt;
         } else if (cmp > 0) {
-            if (!currentNode->gt) {
-                currentNode->gt = createdNode;
-                return 1;
-            }
-            currentNode = currentNode->gt;
-        } else return 0;
+            if (!node->gt)
+                CREATE_NODE(node->gt);
+            node = node->gt;
+        } else 
+            return false;
     }
 }
 
-void *BSTree_get(const BSTree *bt, const char *id) {
-    int idLen = strlen(id);
-    if (idLen == 0) return 0;
+void *bstree_get(const struct bstree *bt, const char *id)
+{
+    int id_len = strlen(id);
+    if (!id_len) 
+        return NULL;
 
-    if (!bt->root) return NULL;
+    if (!bt->root)
+        return NULL;
 
-    BSTree_Node *currentNode = bt->root;
+    struct bstree_node *node = bt->root;
     while (1) {
-        const char *nodeId = bt->identify(currentNode->instance);
-        int cmp = strcmp(nodeId, id);
+        const char *node_id = bt->identify(node->instance);
+        int cmp = strcmp(node_id, id);
 
-        if (cmp == 0) return currentNode->instance;
+        if (cmp == 0) 
+            return node->instance;
 
-        if (cmp < 0 && currentNode->lt) currentNode = currentNode->lt;
-        else if (cmp > 0 && currentNode->gt) currentNode = currentNode->gt;
-        else return NULL;
+        if (cmp < 0 && node->lt) 
+            node = node->lt;
+        else if (cmp > 0 && node->gt) 
+            node = node->gt;
+        else 
+            return NULL;
     }
 }
 
-void *BSTree_remove(BSTree *bt, const char *id) {
-    int idLen = strlen(id);
-    if (idLen == 0) return NULL;
+void *bstree_remove(struct bstree *bt, const char *id)
+{
+    int id_len = strlen(id);
+    if (id_len == 0)
+        return NULL;
 
-    if (!bt->root) return NULL;
+    if (!bt->root)
+        return NULL;
 
-    BSTree_Node *parent = NULL;
-    int parentDirection = 0;
-    BSTree_Node *currentNode = bt->root;
+    struct bstree_node *parent = NULL;
+    struct bstree_node *node = bt->root;
+    int_fast8_t parent_direction = 0;
+
     while (1) {
-        const char *nodeId = bt->identify(currentNode->instance);
-        int cmp = strcmp(nodeId, id);
+        const char *node_id = bt->identify(node->instance);
+        int cmp = strcmp(node_id, id);
 
-        if (cmp == 0)  break;
-        parent = currentNode;
+        if (cmp == 0) 
+            break;
+        parent = node;
 
-        if (cmp < 0 && currentNode->lt) {
-            currentNode = currentNode->lt;
-            parentDirection = 0;
+        if (cmp < 0 && node->lt) {
+            node = node->lt;
+            parent_direction = 0;
         } 
-        else if (cmp > 0 && currentNode->gt) {
-            currentNode = currentNode->gt;
-            parentDirection = 1;
+        else if (cmp > 0 && node->gt) {
+            node = node->gt;
+            parent_direction = 1;
         }
-        else return 0;
+        else 
+            return NULL;
     }
 
-    if (currentNode->lt && currentNode->gt) {
-        BSTree_Node *successorParent = currentNode;
-        BSTree_Node *successor = currentNode->gt;
-        int parentDirection = 1;
+    void *instance;
+
+    if (node->lt && node->gt) {
+        struct bstree_node *successor_parent = node;
+        struct bstree_node *successor = node->gt;
+        int_fast8_t parent_direction = 1;
+
         while (successor->lt) {
-            parentDirection = 0;
-            successorParent = successor;
+            parent_direction = 0;
+            successor_parent = successor;
             successor = successor->lt;
         }
-        void *instance = currentNode->instance;
-        currentNode->instance = successor->instance;
-        if (parentDirection) successorParent->gt = successor->gt;
-        else successorParent->lt = successor->gt;
-        free(successor);
 
-        return instance;
-    } 
-    
-    BSTree_Node *overwritingNode = currentNode->lt ? currentNode->lt : currentNode->gt;
-    if (parent) 
-        if (parentDirection) parent->gt = overwritingNode;
-        else parent->lt = overwritingNode;
-    else bt->root = overwritingNode;
-    void *instance = currentNode->instance;
-    free(currentNode);
+        instance = node->instance;
+        node->instance = successor->instance;
+
+        if (parent_direction) 
+            successor_parent->gt = successor->gt;
+        else 
+            successor_parent->lt = successor->gt;
+
+        free(successor);
+    } else { 
+        struct bstree_node *overwriting_node = node->lt ? node->lt : node->gt;
+
+        if (parent) 
+            if (parent_direction) 
+                parent->gt = overwriting_node;
+            else 
+                parent->lt = overwriting_node;
+        else 
+            bt->root = overwriting_node;
+
+        instance = node->instance;
+        free(node);
+    }
 
     return instance;
 }
 
-char BSTree_delete(BSTree *bt, const char *id) {
-    void *instance = BSTree_remove(bt, id);
-    if (instance) bt->drop(instance);
+bool bstree_delete(struct bstree *bt, const char *id)
+{
+    void *instance = bstree_remove(bt, id);
+    if (instance) 
+        bt->drop(instance);
+
     return !!instance;
 }
 
-char BSTree_contains(const BSTree *bt, const char *id) {
-    return !!BSTree_get(bt, id);
+bool bstree_contains(const struct bstree *bt, const char *id)
+{
+    return !!bstree_get(bt, id);
 }
