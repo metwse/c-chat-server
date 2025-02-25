@@ -1,87 +1,89 @@
 /*! 
- * `LinkedList` implements basic methods of linked list data structure.
+ * `linked_list` implements basic methods of linked list data structure.
  */
 
 #ifndef COLLECTIONS_LINKED_LIST
 #define COLLECTIONS_LINKED_LIST
 
+#include <stddef.h>
+#include <stdbool.h>
 #include "traits.h"
 
 /**
- * \brief LinkedList_Node struct
+ * \brief linked_list struct
  */
-typedef struct LinkedList_Node {
+struct linked_list_node {
     void *data;
-    struct LinkedList_Node *next;
-    struct LinkedList_Node *prev;
-} LinkedList_Node;
+    struct linked_list_node *next;
+    struct linked_list_node *prev;
+};
 
 /**
- * \brief LinkedList struct
+ * \brief linked_list struct
  *
  * Implements fundemantal linked list methods.
  */
-typedef struct LinkedList {
+struct linked_list {
     instance_identify identify;
     instance_drop drop;
-    LinkedList_Node *root;
-    LinkedList_Node *last;
-    unsigned length;
-} LinkedList;
+    struct linked_list_node *root;
+    struct linked_list_node *last;
+    size_t length;
+};
 
 /**
  * \brief Creates a new LinkedList.
  */
-LinkedList *LinkedList_new(instance_identify, instance_drop);
+struct linked_list *linked_list_new(instance_identify, instance_drop);
 
 /**
  * \brief Keeping its elements, drops the linked list.
  */
-void LinkedList_drop(LinkedList *);
+void linked_list_drop(struct linked_list *);
 
 /**
  * \brief Drops the linked list freeing its elements.
  */
-void LinkedList_clear(LinkedList *);
+void linked_list_clear(struct linked_list *);
 
 /**
  * \brief Pushes an element into LinkedList.
  */
-void LinkedList_push(LinkedList *, void *element);
+void linked_list_push(struct linked_list *, void *element);
 
 /**
- * \brief Adds an element to the beginning of LinkedList.
+ * \brief Adds an element to the beginning of linked list.
  */
-void LinkedList_unshift(LinkedList *, void *element);
+void linked_list_unshift(struct linked_list *, void *element);
 
 /**
- * \brief Gets data from LinkedList by the index.
+ * \brief Gets data from linked list by the index.
  */
-void *LinkedList_get(const LinkedList *, unsigned index);
+void *linked_list_get(const struct linked_list *, size_t index);
 
 /**
  * \brief Gets data from LinkedList by its id.
  */
-void *LinkedList_getById(const LinkedList *, char const *id);
+void *linked_list_get_by_id(const struct linked_list *, char const *id);
 
 /**
  * \brief Removes the instance from list, returs the instance.
  */
-void *LinkedList_remove(LinkedList *, unsigned index);
+void *linked_list_remove(struct linked_list *, size_t index);
 
 /**
  * \brief Removes and clears the instance by its index.
  */
-char LinkedList_delete(LinkedList *, unsigned index);
+bool linked_list_delete(struct linked_list *, size_t index);
 
 /**
  * \brief Removes the instance from list by its id, returs the instance.
  */
-void *LinkedList_removeById(LinkedList *, char const *id);
+void *linked_list_remove_by_id(struct linked_list *, char const *id);
 
 /**
  * \brief Removes and clears the instance by its id.
  */
-char LinkedList_deleteById(LinkedList *, char const *id);
+bool linked_list_delete_by_id(struct linked_list *, char const *id);
 
 #endif // !COLLECTIONS_LINKED_LIST

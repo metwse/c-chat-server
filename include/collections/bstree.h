@@ -1,71 +1,72 @@
 /*! 
- * `BSTree` implements basic methods of binary search tree data structure.
+ * `bstree` implements basic methods of binary search tree data structure.
  */
 
 #ifndef COLLECTIONS_BSTREE_H
 #define COLLECTIONS_BSTREE_H
 
+#include <stdbool.h>
 #include "traits.h"
 
 /**
- * \brief BSTree_Node struct
+ * \brief bstree_node struct
  * 
  * Data should implemet a char *identifier(void const *data) function which
  * returns an unique identifier for it.
  */
-typedef struct BSTree_Node {
-    struct BSTree_Node *gt;
-    struct BSTree_Node *lt;
+struct bstree_node {
+    struct bstree_node *gt;
+    struct bstree_node *lt;
     void *instance;
-} BSTree_Node;
+};
 
 /**
  * \brief Binary search tree struct
  */
-typedef struct {
+struct bstree {
     instance_identify identify;
     instance_drop drop;
-    BSTree_Node *root;
-} BSTree;
+    struct bstree_node *root;
+};
 
 /**
- * \brief Creates a new BSTree.
+ * \brief Creates a new bstree.
  */
-BSTree *BSTree_new(instance_identify, instance_drop);
+struct bstree *bstree_new(instance_identify, instance_drop);
 
 /**
  * \brief Keeping its instances, drops the tree.
  */
-void BSTree_drop(BSTree *);
+void bstree_drop(struct bstree *);
 
 /**
  * \brief Drops the tree freeing its instances.
  */
-void BSTree_clear(BSTree *);
+void bstree_clear(struct bstree *);
 
 /**
- * \brief Pushes data into BSTree.
+ * \brief Pushes data into bstree.
  */
-char BSTree_push(BSTree *, void *instance);
+bool bstree_push(struct bstree *, void *instance);
 
 /**
- * \brief Gets data from BSTree.
+ * \brief Gets data from bstree.
  */
-void *BSTree_get(const BSTree *, const char *id);
+void *bstree_get(const struct bstree *, const char *id);
 
 /**
  * \brief Removes instance from the tree by its id.
  */
-void *BSTree_remove(BSTree *, const char *id);
+void *bstree_remove(struct bstree *, const char *id);
 
 /**
  * \brief Removes and clears instance tree by its id.
  */
-char BSTree_delete(BSTree *, const char *id);
+bool bstree_delete(struct bstree *, const char *id);
 
 /**
- * \brief Check whether identifier contained in the BSTree.
+ * \brief Check whether identifier contained in the bstree.
  */
-char BSTree_contains(const BSTree *, const char *id);
+bool bstree_contains(const struct bstree *, const char *id);
 
 #endif // !COLLECTIONS_BSTREE_H

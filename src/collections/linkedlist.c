@@ -2,12 +2,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stddef.h>
+#include <stdbool.h>
 #include <string.h>
 #include <strings.h>
 
 
-LinkedList *LinkedList_new(instance_identify identify, instance_drop drop) {
-    LinkedList *ll = malloc(sizeof(LinkedList));
+struct linked_list *linked_list_new(instance_identify identify, instance_drop drop) {
+    struct linked_list *ll = malloc(sizeof(struct linked_list));
     ll->root = NULL;
     ll->last = NULL;
     ll->identify = identify;
@@ -17,11 +19,11 @@ LinkedList *LinkedList_new(instance_identify identify, instance_drop drop) {
     return ll;
 };
 
-void _LinkedList_drop(LinkedList *ll, int clearElements) {
-    LinkedList_Node *node = ll->root;
+void _linked_list_drop(struct linked_list *ll, int clearElements) {
+    struct linked_list_node *node = ll->root;
 
     while (node) {
-        LinkedList_Node *next = node->next;
+        struct linked_list_node *next = node->next;
         if (clearElements) ll->drop(node->data);
         free(node);
         node = next;
@@ -30,16 +32,16 @@ void _LinkedList_drop(LinkedList *ll, int clearElements) {
     free(ll);
 }
 
-void LinkedList_drop(LinkedList *ll) {
-    _LinkedList_drop(ll, 0);
+void linked_list_drop(struct linked_list *ll) {
+    _linked_list_drop(ll, 0);
 }
 
-void LinkedList_clear(LinkedList *ll) {
-    _LinkedList_drop(ll, 1);
+void linked_list_clear(struct linked_list *ll) {
+    _linked_list_drop(ll, 1);
 }
 
-void LinkedList_push(LinkedList *ll, void *element) {
-    LinkedList_Node *createdNode = malloc(sizeof(LinkedList_Node));
+void linked_list_push(struct linked_list *ll, void *element) {
+    struct linked_list_node *createdNode = malloc(sizeof(struct linked_list_node));
 
     createdNode->data = element;
     createdNode->next = NULL;
@@ -52,8 +54,8 @@ void LinkedList_push(LinkedList *ll, void *element) {
     ll->last = createdNode;
 }
 
-void LinkedList_unshift(LinkedList *ll, void *element) {
-    LinkedList_Node *createdNode = malloc(sizeof(LinkedList_Node));
+void linked_list_unshift(struct linked_list *ll, void *element) {
+    struct linked_list_node *createdNode = malloc(sizeof(struct linked_list_node));
 
     createdNode->data = element;
     createdNode->next = NULL;
@@ -65,7 +67,7 @@ void LinkedList_unshift(LinkedList *ll, void *element) {
     ll->root = createdNode;
 }
 
-void *removeElement(LinkedList *ll, LinkedList_Node *node, unsigned index) {
+void *removeElement(struct linked_list *ll, struct linked_list_node *node, size_t index) {
     if (node->prev) node->prev->next = node->next;
     if (node->next) node->next->prev = node->prev;
 
@@ -79,10 +81,10 @@ void *removeElement(LinkedList *ll, LinkedList_Node *node, unsigned index) {
     return data;
 }
 
-void *LinkedList_get(const LinkedList *ll, unsigned index) {
+void *linked_list_get(const struct linked_list *ll, size_t index) {
     if (index >= ll->length) return NULL;
 
-    LinkedList_Node *currentNode;
+    struct linked_list_node *currentNode;
     if (index > (ll->length >> 1)) {
         currentNode = ll->last;
         index = ll->length - index - 1;
@@ -95,8 +97,8 @@ void *LinkedList_get(const LinkedList *ll, unsigned index) {
     return currentNode->data;
 }
 
-void *LinkedList_getById(LinkedList const *ll, char const *id) {
-    LinkedList_Node *currentNode = ll->root;
+void *linked_list_get_by_id(struct linked_list const *ll, char const *id) {
+    struct linked_list_node *currentNode = ll->root;
 
     while (currentNode->next) {
         if (!strcmp(ll->identify(currentNode->data), id))
@@ -107,11 +109,11 @@ void *LinkedList_getById(LinkedList const *ll, char const *id) {
     return NULL;
 }
 
-void *LinkedList_remove(LinkedList *ll, unsigned index) {
+void *linked_list_remove(struct linked_list *ll, size_t index) {
     if (index >= ll->length) return NULL;
 
-    LinkedList_Node *currentNode;
-    unsigned i;
+    struct linked_list_node *currentNode;
+    size_t i;
     if (index > (ll->length >> 1)) {
         currentNode = ll->last;
         i = ll->length - index - 1;
@@ -125,8 +127,8 @@ void *LinkedList_remove(LinkedList *ll, unsigned index) {
     return removeElement(ll, currentNode, index);
 }
 
-void *LinkedList_removeById(LinkedList *ll, char const *id) {
-    LinkedList_Node *currentNode = ll->root;
+void *linked_list_remove_by_id(struct linked_list *ll, char const *id) {
+    struct linked_list_node *currentNode = ll->root;
 
     unsigned index = 0;
     while (currentNode->next) {
@@ -139,14 +141,14 @@ void *LinkedList_removeById(LinkedList *ll, char const *id) {
     return NULL;
 }
 
-char LinkedList_delete(LinkedList *ll, unsigned index) {
-    void *data = LinkedList_remove(ll, index);
+bool linked_list_delete(struct linked_list *ll, size_t index) {
+    void *data = linked_list_remove(ll, index);
     if (data) ll->drop(data); 
     return !!data;
 }
 
-char LinkedList_deleteById(LinkedList *ll, char const *id) {
-    void *data = LinkedList_removeById(ll, id);
+bool linked_list_delete_by_id(struct linked_list *ll, char const *id) {
+    void *data = linked_list_remove_by_id(ll, id);
     if (data) ll->drop(data); 
     return !!data;
 }
