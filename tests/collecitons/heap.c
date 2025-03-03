@@ -17,20 +17,20 @@ int main() {
         sprintf(identifiers[i], "%c", 52 - (char) i);
     }
 
-    printf("test: insert");
+    printf("test: insert\n");
     for (uint8_t i = 0; i < 4; i++)
         heap_insert(h, test_collectable_new(identifiers[i]));
 
-    printf("test: extract");
+    printf("test: extract\n");
     for (uint8_t i = 0; i < 4; i++)
         assert(((struct test_collectable *) heap_extract_root(h))->id == identifiers[3 - i]);
 
-    printf("test: deleteRoot");
+    printf("test: delete_root\n");
     for (uint8_t i = 0; i < 4; i++)
         heap_insert(h, test_collectable_new(identifiers[i]));
 
     for (uint8_t i = 0; i < 4; i++) assert(heap_delete_root(h));
 
-    printf("test: drop");
+    printf("test: drop\n");
     heap_drop(h);
 }

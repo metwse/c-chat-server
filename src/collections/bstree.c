@@ -1,7 +1,6 @@
 #include "../../include/collections/bstree.h"
 
 #include <stdbool.h>
-#include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
@@ -45,10 +44,6 @@ void bstree_clear(struct bstree *bt)
 
 bool bstree_push(struct bstree *bt, void *instance)
 {
-    // const char *id = bt->identify(instance);
-    // int id_len = strlen(id);
-    // if (id_len == 0) return false;
-
     #define CREATE_NODE(var) { \
         var = malloc(sizeof(struct bstree_node)); \
         var->gt = NULL; \

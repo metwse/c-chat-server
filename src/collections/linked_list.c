@@ -1,12 +1,10 @@
 #include "../../include/collections/linked_list.h"
 
-#include <endian.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stddef.h>
 #include <stdbool.h>
 #include <string.h>
-#include <strings.h>
 
 
 static inline struct linked_list_node *__get_node(const struct linked_list *ll,
