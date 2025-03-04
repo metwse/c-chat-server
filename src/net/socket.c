@@ -33,7 +33,7 @@ TRACING(t_connection);
             continue;
 
 #ifdef DEBUG
-    LOG(t_connection, "new connetion with fd %d (port %d)", connfd, cli->sin_port)
+    LOG(t_connection, "new connection with fd %d (port %d)", connfd, cli->sin_port)
 #endif
 
         pthread_t *thread_id = malloc(sizeof(pthread_t));
