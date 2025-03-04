@@ -2,7 +2,7 @@
 #define COLLECTIONS_TRAITS_H
 
 /**
- * \brief Identifier type alias as a trait
+ * Identifier type alias as a trait
  *
  * A function pointer that returns unique id for given instance.
  */

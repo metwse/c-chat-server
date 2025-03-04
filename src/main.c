@@ -15,5 +15,5 @@ int main()
     ENV(HOST);
     ENV(PORT);
 
-    serve(HOST, strtol(PORT, NULL, 10));
+    serve(HOST, strtol(PORT, NULL, 10), NULL);
 }

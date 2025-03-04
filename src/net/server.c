@@ -21,7 +21,7 @@ const struct tracing *t_server;
 #endif
 
 
-void serve(char *host, int port) 
+void serve(char *host, int port, void *shared_state) 
 {
 #ifdef DEBUG
 TRACING(t_server);
@@ -60,5 +60,5 @@ LOG(init, "socket binded");
 LOG(init, "listening port");
 #endif
 
-    handle_socket(socketfd);
+    handle_socket(socketfd, shared_state);
 }

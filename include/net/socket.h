@@ -5,6 +5,6 @@
 #ifndef NET_SOCKET
 #define NET_SOCKET
 
-void handle_socket(int socket_fd);
+void handle_socket(int socket_fd, void *shared_state);
 
 #endif

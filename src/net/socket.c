@@ -12,7 +12,7 @@ const struct tracing *t_connection;
 #endif
 
 
-void handle_socket(int socketfd) 
+void handle_socket(int socketfd, void *shared_state) 
 {
 #ifdef DEBUG
 TRACING(t_connection);
@@ -39,6 +39,7 @@ TRACING(t_connection);
         struct connection_info *cinfo = malloc(sizeof(struct connection_info));
         cinfo->sockaddr_in = cli;
         cinfo->connection_fd = connfd;
+        cinfo->shared_state = shared_state;
 
         pthread_create(thread_id, &attr, *handle_connection, cinfo);
     }

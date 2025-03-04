@@ -10,6 +10,7 @@
 struct connection_info {
     int connection_fd;
     struct sockaddr_in *sockaddr_in;
+    void *shared_state;
 };
 
 void *handle_connection(void *);
