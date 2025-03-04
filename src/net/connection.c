@@ -7,7 +7,8 @@
 #include <stdio.h>
 
 
-void *handle_connection(void *connection_info) {
+void *handle_connection(void *connection_info) 
+{
     struct connection_info *cinfo = connection_info;
     int connfd = cinfo->connection_fd;
     struct sockaddr_in *cli = cinfo->sockaddr_in;
@@ -20,7 +21,6 @@ void *handle_connection(void *connection_info) {
             break;
 
         printf("%s", buf);
-
     }
     free(cli);
     free(connection_info);

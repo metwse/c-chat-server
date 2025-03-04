@@ -1,15 +1,31 @@
 # Protocol
+If a message is sent without specifying a channel or a user, it will be 
+broadcasted to all channels the user is subscribed to.
 
-```
-login <username>
+### `/signup <username> <password>`
+Creates a user with the given username and password.
 
-subscribe <channel_name>
+### `/login <username> <password>`
+Logs in to the account.
 
-unsubcribe <channel_name>
+### `/subscribe <channel_name> <channel_password>`
+Subscribes to the specified chanel. Messages from the channel will be 
+broadcasted to the user.
 
-list_users <channel_name>
+### `/unsubcribe <channel_name>`
+Unsubcribes from the channel.
 
-delete <channel_name>
+### `/list_users <channel_name>`
+Lists users subscribed to the channel. Can only be used by channel subscribers.
 
-logout
-```
+### `/delete <channel_name>`
+Deletes the specified channel. Can only be used by channel subscribers.
+
+### `/logout`
+Logs out and unauthenticates the connection.
+
+### `#<channel_name> ...message`
+Sends a message to a specific channel.
+
+### `@<username> ...message`
+Sends a message to specified user.

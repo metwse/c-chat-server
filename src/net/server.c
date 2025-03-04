@@ -21,7 +21,8 @@ const struct tracing *t_server;
 #endif
 
 
-void serve(char *host, int port) {
+void serve(char *host, int port) 
+{
 #ifdef DEBUG
 TRACING(t_server);
 SPAN(t_server, init);

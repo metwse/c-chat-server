@@ -12,7 +12,8 @@ const struct tracing *t_connection;
 #endif
 
 
-void handle_socket(int socketfd) {
+void handle_socket(int socketfd) 
+{
 #ifdef DEBUG
 TRACING(t_connection);
 #endif
