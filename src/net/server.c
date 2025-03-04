@@ -1,3 +1,4 @@
+#include "../../include/shared_state.h" 
 #include "../../include/net/server.h" 
 #include "../../include/net/socket.h" 
 
@@ -21,7 +22,7 @@ const struct tracing *t_server;
 #endif
 
 
-void serve(char *host, int port, void *shared_state) 
+void serve(char *host, int port, struct shared_state *shared_state) 
 {
 #ifdef DEBUG
 TRACING(t_server);

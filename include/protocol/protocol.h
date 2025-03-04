@@ -38,4 +38,9 @@ struct command_response {
     void *response;
 };
 
+/**
+ * Processes the given command
+ */
+struct command_response *eval_command(char *);
+
 #endif

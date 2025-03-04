@@ -5,6 +5,8 @@
 #ifndef NET_SERVER
 #define NET_SERVER
 
-void serve(char *host, int port, void *shared_state);
+#include "../shared_state.h"
+
+void serve(char *host, int port, struct shared_state *shared_state);
 
 #endif

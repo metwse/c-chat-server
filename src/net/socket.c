@@ -1,3 +1,4 @@
+#include "../../include/shared_state.h"
 #include "../../include/net/socket.h"
 #include "../../include/net/connection.h"
 
@@ -12,7 +13,7 @@ const struct tracing *t_connection;
 #endif
 
 
-void handle_socket(int socketfd, void *shared_state) 
+void handle_socket(int socketfd, struct shared_state *shared_state) 
 {
 #ifdef DEBUG
 TRACING(t_connection);
