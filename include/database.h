@@ -35,8 +35,10 @@ struct connection {
 };
 
 const char *user_identify(void const *);
+int user_ordering(void const *, void const *);
 
 const char *channel_identify(void const *);
+int channel_ordering(void const *, void const *);
 
 const char *connection_identify(void const *);
 
