@@ -1,38 +1,46 @@
 #include "../../include/net/socket.h"
+#include "../../include/net/connection.h"
 
+#include <pthread.h>
 #include <stdlib.h>
 #include <sys/socket.h>
-#include <unistd.h>
 #include <netinet/in.h>
-#include <strings.h>
-#include <stdio.h>
+#include <unistd.h>
+
+#ifdef DEBUG
+const struct tracing *t_connection;
+#endif
 
 
 void handle_socket(int socketfd) {
 #ifdef DEBUG
-SPAN(t_server, connection);
+TRACING(t_connection);
 #endif
-    
     unsigned int len = sizeof(struct sockaddr_in);
-    struct sockaddr_in *cli = malloc(len);
+    pthread_attr_t attr;
 
-    int connfd = accept(socketfd, (struct sockaddr *) cli, &len);
-
-    if (!connfd)
+    if (pthread_attr_init(&attr))
         return;
 
+    while (1) {
+        struct sockaddr_in *cli = malloc(len);
+
+        int connfd = accept(socketfd, (struct sockaddr *) cli, &len);
+
+        if (!connfd)
+            continue;
+
 #ifdef DEBUG
-LOG(connection, "new connetion with fd %d (port %d)", connfd, cli->sin_port)
+    LOG(t_connection, "new connetion with fd %d (port %d)", connfd, cli->sin_port)
 #endif
 
-    // TODO: implement command handling
-    char buf[80];
-    bzero(&buf, 80);
+        pthread_t *thread_id = malloc(sizeof(pthread_t));
+        struct connection_info *cinfo = malloc(sizeof(struct connection_info));
+        cinfo->sockaddr_in = cli;
+        cinfo->connection_fd = connfd;
 
-    read(connfd, buf, 80);
-    printf("%s", buf);
+        pthread_create(thread_id, &attr, *handle_connection, cinfo);
+    }
 
-    close(connfd);
-    return;
+    close(socketfd);
 }
-

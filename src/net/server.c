@@ -59,6 +59,5 @@ LOG(init, "socket binded");
 LOG(init, "listening port");
 #endif
 
-    while (1)
-        handle_socket(socketfd);
+    handle_socket(socketfd);
 }

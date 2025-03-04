@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 #define ENV(VAR) char *VAR = getenv(#VAR); \
     if (!VAR) { \
         fprintf(stderr, "Cannot get environment variable %s\n", #VAR); \
