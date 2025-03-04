@@ -1,4 +1,5 @@
 #include "../../include/net/connection.h"
+#include "../../include/database.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -7,16 +8,15 @@
 #include <strings.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 #define SAVE_BUF(var) do { \
         var = malloc((readen + 1) * sizeof(char)); \
-        strncat(var, buf, readen); \
+        strncpy(var, buf, readen); \
         var[readen] = '\0'; \
     } while (0)
 
-#define PRINT(fd, ...) dprintf(fd, __VA_ARGS__);
-
-static const char *WELCOME_MESSAGE = "Welcome to the chat server!\nusername: ";
+#define PRINT(fd, ...) dprintf(fd, __VA_ARGS__)
 
 
 void *handle_connection(void *connection_info) 
@@ -26,7 +26,11 @@ void *handle_connection(void *connection_info)
     struct sockaddr_in *cli = cinfo->sockaddr_in;
     struct shared_state *ss = cinfo->shared_state;
 
-    PRINT(fd, "%s", WELCOME_MESSAGE);
+    struct connection *conn = malloc(sizeof(struct connection));
+    conn->fd = fd;
+    conn->user = NULL;
+
+    PRINT(fd, "Welcome to the chat server!\nusername: ");
 
     char *buf = malloc(sizeof(char) * 2048);
     bzero(buf, 2047);
@@ -52,34 +56,72 @@ void *handle_connection(void *connection_info)
             break;
 
         if (!is_authenticated) {
+            accept_account_creation = buf[0];
+
+            // ask for username and password
             if (!credentials_given) {
                 if (!username && readen) {
                     SAVE_BUF(username);
                     PRINT(fd, "password: ");
-                } else if (!username) {
+                } else if (!username)
                     PRINT(fd, "username: ");
-                } else if (!password && readen) {
+                else if (!password && readen) {
                     SAVE_BUF(password);
+                    credentials_given = true;
+                } else
+                    PRINT(fd, "password: ");
+
+                accept_account_creation = '\0';
+            } 
+
+            if (credentials_given) {
+                pthread_mutex_lock(&ss->lock);
+                struct user *u = bstree_get(ss->users, username);
+
+                // check whether password is correct if user exits
+                if (u) {
+                    if (!strcmp(u->password, password)) {
+                        is_authenticated = true;
+                        conn->user = u;
+                        linked_list_push(u->connections, conn);
+                        pthread_mutex_unlock(&ss->lock);
+                        PRINT(fd, "Welcome!\n");
+                    } else {
+                        pthread_mutex_unlock(&ss->lock);
+                        password = NULL;
+                        PRINT(fd, "Invalid password!\npassword: ");
+                        credentials_given = false;
+                    }
+                } // ask for account creation if no such account exits
+                else if (accept_account_creation == 'y') {
+                    if (bstree_contains(ss->users, username)) {
+                        pthread_mutex_unlock(&ss->lock);
+                        PRINT(fd, 
+                              "Unexcepted error! Please try again later.\n");
+                        break;
+                    }
+
+                    u = malloc(sizeof(struct user));
+                    conn->user = u;
+                    u->username = username;
+                    u->password = password;
+                    u->connections = linked_list_new(connection_identify, NULL);
+                    linked_list_push(u->connections, conn);
+                    bstree_push(ss->users, u);
+
+                    is_authenticated = true;
+                    pthread_mutex_unlock(&ss->lock);
+
+                    PRINT(fd, "Account created. Welcome!\n");
+                } else if (accept_account_creation == 'n') {
+                    pthread_mutex_unlock(&ss->lock);
+                    PRINT(fd, "Bye!\n");
+                    break;
+                } else if (!u) {
+                    pthread_mutex_unlock(&ss->lock);
                     PRINT(fd,
                           "User %s not found. Would you like to create a new "
                           "account? (y/n): ", username);
-                    credentials_given = true;
-                } else {
-                    PRINT(fd, "password: ");
-                }
-            } else {
-                accept_account_creation = buf[0];
-                struct user *u = bstree_get(ss->users, username);
-
-                if (u) {
-                    // TODO: is_authenticated
-                } else if (
-                    accept_account_creation != 'n' &&
-                    accept_account_creation != 'y'
-                ) {
-                    PRINT(fd, "(y/n): ");
-                } else {
-                    break;
                 }
             }
         } else {
@@ -89,6 +131,14 @@ void *handle_connection(void *connection_info)
         bzero(buf, readen + 2);
     }
 
+    if (conn->user) {
+        if (conn->user->connections) {
+            linked_list_remove_by_id(conn->user->connections,
+                                     connection_identify(conn));
+        }
+    }
+
+    free(conn);
     free(cli);
     free(buf);
     free(connection_info);
