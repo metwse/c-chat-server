@@ -1,4 +1,5 @@
 #!/bin/bash
 
-gcc -std=c99 -Wall -Werror $(find ./src -name *.c) -o /tmp/chat -lm
+. .env
+gcc -std=gnu18 -Wall -Werror $(find ./src -name *.c) -o /tmp/chat -lm
 /tmp/chat

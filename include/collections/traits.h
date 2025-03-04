@@ -25,4 +25,4 @@ typedef void (*instance_drop)(void *instance);
  */
 typedef int (*instance_ordering)(void const *instance1, void const *instance2);
 
-#endif // !COLLECTIONS_TRAITS_H
+#endif

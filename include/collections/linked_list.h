@@ -91,4 +91,4 @@ void *linked_list_remove_by_id(struct linked_list *, char const *id);
  */
 bool linked_list_delete_by_id(struct linked_list *, char const *id);
 
-#endif // !COLLECTIONS_LINKED_LIST
+#endif

@@ -1,6 +1,6 @@
 #ifndef TRACING
 
-#define TRACING(SCOPE) const struct tracing *SCOPE = tracing_new(#SCOPE);
+#define TRACING(SCOPE) SCOPE = tracing_new(#SCOPE);
 #define SPAN(SCOPE, SPAN) const struct tracing *SPAN = tracing_span(SCOPE, #SPAN);
 #define LOG(SPAN, ...) tracing_log(SPAN); \
     printf(__VA_ARGS__); \

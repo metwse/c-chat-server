@@ -70,4 +70,4 @@ bool bstree_delete(struct bstree *, const char *id);
  */
 bool bstree_contains(const struct bstree *, const char *id);
 
-#endif // !COLLECTIONS_BSTREE_H
+#endif

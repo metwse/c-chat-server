@@ -69,4 +69,4 @@ bool heap_resize(struct heap *, size_t size);
  */
 bool heap_resize_by_freeing(struct heap *, size_t size);
 
-#endif // !COLLECTIONS_HEAP_H
+#endif
