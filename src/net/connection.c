@@ -31,6 +31,7 @@ void *handle_connection(void *connection_info)
     conn->fd = fd;
     conn->user = NULL;
     conn->drop = false;
+    conn->cmd_data = NULL;
 
     PRINT(fd, "Welcome to the chat server!\nusername: ");
 

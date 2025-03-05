@@ -37,6 +37,7 @@ struct connection {
     int fd;
     bool drop;
     struct user *user;
+    void *cmd_data;
 };
 
 const char *user_identify(void const *);
