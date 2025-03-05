@@ -26,6 +26,8 @@ struct cmd_data {
 void handle_message(struct connection *conn, struct shared_state *ss,
                     char *msg) {
     LOCK;
+    int fd = conn->fd;
+
     if (conn->cmd_data) {
         struct cmd_data *data = conn->cmd_data;
         conn->cmd_data = NULL;
@@ -36,7 +38,7 @@ void handle_message(struct connection *conn, struct shared_state *ss,
                     case 'y':
                         if (bstree_contains(ss->channels, data->data[0])) {
                             UNLOCK;
-                            dprintf(conn->fd, "> Unexpected error! Pleaase try"
+                            dprintf(fd, "> Unexpected error! Pleaase try"
                                     " again.\n");
                             break;
                         }
@@ -48,11 +50,11 @@ void handle_message(struct connection *conn, struct shared_state *ss,
                         linked_list_push(conn->user->channels, c);
                         bstree_push(ss->channels, c);
                         UNLOCK;
-                        dprintf(conn->fd, "> Channel created.\n");
+                        dprintf(fd, "> Channel created.\n");
                         break;
                     default:
                         UNLOCK;
-                        dprintf(conn->fd, "> Abort\n");
+                        dprintf(fd, "> Abort\n");
                         free(data->data[0]);
                         free(data->data[1]);
                         break;
@@ -66,7 +68,6 @@ void handle_message(struct connection *conn, struct shared_state *ss,
 
     switch (msg[0]) {
         case '/':;
-            int fd = conn->fd;
             char *rest = msg;
             char *command = strtok_r(rest, " ", &rest);
 
@@ -139,7 +140,6 @@ void handle_message(struct connection *conn, struct shared_state *ss,
             char *username = strdup(conn->user->username);
 
             if (!conn->user->channels->length) {
-                int fd = conn->fd;
                 UNLOCK;
                 dprintf(fd, "> You are not in any channel. Consider using "
                         "/subscribe <channel_name> <channel_password> to "
