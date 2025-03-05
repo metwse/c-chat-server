@@ -6,6 +6,8 @@
 #define DATABASE
 
 #include "collections/linked_list.h"
+#include <stdbool.h>
+
 
 /**
  * User struct.
@@ -13,7 +15,7 @@
 struct user {
     char *username;
     char *password;
-    struct linked_list connections;
+    struct linked_list *connections;
 };
 
 /**
@@ -22,6 +24,7 @@ struct user {
 struct channel {
     char *channel_name;
     char *password;
+    struct linked_list *users;
 };
 
 /**
@@ -31,6 +34,7 @@ struct channel {
  */
 struct connection {
     int fd;
+    bool drop;
     struct user *user;
 };
 

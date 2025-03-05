@@ -29,6 +29,7 @@ void *handle_connection(void *connection_info)
     struct connection *conn = malloc(sizeof(struct connection));
     conn->fd = fd;
     conn->user = NULL;
+    conn->drop = false;
 
     PRINT(fd, "Welcome to the chat server!\nusername: ");
 
@@ -45,6 +46,8 @@ void *handle_connection(void *connection_info)
 
     while (1) {
         readen = read(fd, buf, 2048);
+        if (conn->drop)
+            break;
 
         if (readen == -1 || readen == 2048 || !readen)
             break;
@@ -131,11 +134,15 @@ void *handle_connection(void *connection_info)
         bzero(buf, readen + 2);
     }
 
-    if (conn->user) {
-        if (conn->user->connections) {
-            linked_list_remove_by_id(conn->user->connections,
-                                     connection_identify(conn));
-        }
+    if (conn->user && conn->user->connections)
+        linked_list_remove_by_id(conn->user->connections,
+                                 connection_identify(conn));
+
+    if (!is_authenticated) {
+        if (username)
+            free(username);
+        if (password)
+            free(password);
     }
 
     free(conn);

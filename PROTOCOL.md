@@ -2,12 +2,6 @@
 If a message is sent without specifying a channel or a user, it will be 
 broadcasted to all channels the user is subscribed to.
 
-### `/signup <username> <password>`
-Creates a user with the given username and password.
-
-### `/login <username> <password>`
-Logs in to the account.
-
 ### `/subscribe <channel_name> <channel_password>`
 Subscribes to the specified chanel. Messages from the channel will be 
 broadcasted to the user.
