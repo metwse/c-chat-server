@@ -1,4 +1,5 @@
 #include "../../include/net/connection.h"
+#include "../../include/net/messages.h"
 #include "../../include/database.h"
 
 #include <stdlib.h>
@@ -109,6 +110,7 @@ void *handle_connection(void *connection_info)
                     u->username = username;
                     u->password = password;
                     u->connections = linked_list_new(connection_identify, NULL);
+                    u->channels = linked_list_new(channel_identify, NULL);
                     linked_list_push(u->connections, conn);
                     bstree_push(ss->users, u);
 
@@ -128,7 +130,10 @@ void *handle_connection(void *connection_info)
                 }
             }
         } else {
-            // TODO
+            handle_message(conn, ss, buf);
+            
+            if (conn->drop)
+                break;
         }
 
         bzero(buf, readen + 2);
@@ -145,11 +150,13 @@ void *handle_connection(void *connection_info)
             free(password);
     }
 
+    pthread_mutex_lock(&ss->lock);
     free(conn);
     free(cli);
     free(buf);
     free(connection_info);
     close(fd);
+    pthread_mutex_unlock(&ss->lock);
 
     return NULL;
 }

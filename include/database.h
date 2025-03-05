@@ -16,6 +16,7 @@ struct user {
     char *username;
     char *password;
     struct linked_list *connections;
+    struct linked_list *channels;
 };
 
 /**
