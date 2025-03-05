@@ -20,9 +20,9 @@
 #define PRINT(fd, ...) dprintf(fd, __VA_ARGS__)
 
 
-void *handle_connection(void *connection_info) 
+void *handle_connection(void *_cinfo) 
 {
-    struct connection_info *cinfo = connection_info;
+    struct connection_info *cinfo = _cinfo;
     int fd = cinfo->connection_fd;
     struct sockaddr_in *cli = cinfo->sockaddr_in;
     struct shared_state *ss = cinfo->shared_state;
@@ -36,7 +36,7 @@ void *handle_connection(void *connection_info)
     PRINT(fd, "Welcome to the chat server!\nusername: ");
 
     char *buf = malloc(sizeof(char) * 2048);
-    bzero(buf, 2047);
+    bzero(buf, 2048);
 
     int readen = 0;
     bool is_authenticated = false;
@@ -155,7 +155,7 @@ void *handle_connection(void *connection_info)
     free(conn);
     free(cli);
     free(buf);
-    free(connection_info);
+    free(cinfo);
     close(fd);
     pthread_mutex_unlock(&ss->lock);
 

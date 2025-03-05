@@ -65,13 +65,15 @@ void handle_message(struct connection *conn, struct shared_state *ss,
         free(data);
         return;
     }
+    
+    struct linked_list *fds;
+    char *username;
+    char *rest = msg;
 
     switch (msg[0]) {
         case '/':;
-            char *rest = msg;
             char *command = strtok_r(rest, " ", &rest);
 
-            // TODO: commands
             if (!strcmp(command, "/subscribe")) {
                 NEXT_TOKEN(channel_name);
                 if (channel_name) {
@@ -127,17 +129,83 @@ void handle_message(struct connection *conn, struct shared_state *ss,
             }
 
             break;
-        case '#':
-            // TODO: send to a channel
+        case '#':;
+            fds = linked_list_new(NULL, NULL);
+            username = strdup(conn->user->username);
+
+            char *channel = strtok_r(rest, " ", &rest) + 1;
+            if (strlen(channel) < 2) {
+                UNLOCK;
+                break;
+            }
+            struct channel *c = bstree_get(ss->channels, channel);
+            if (!c) {
+                UNLOCK;
+                dprintf(fd, "> Cannot find channel %s.\n", channel);
+                break;
+            }
+
+            bool can_send = false;
+
+            for (size_t j = 0; j < c->users->length; j++) {
+                struct user *u = linked_list_get(c->users, j);
+                if (strcmp(username, u->username))
+                    for (size_t k = 0; k < u->connections->length; k++) {
+                        struct connection *con = linked_list_get(u->connections, k);
+                        linked_list_push(fds, &con->fd);
+                    }
+                else 
+                    can_send = true;
+            }
             UNLOCK;
+
+            if (can_send)
+                for (size_t i = 0; i < fds->length; i++) {
+                    int fd = *(int *) linked_list_get(fds, i);
+                    // TODO: multithreaded send
+                    dprintf(fd, "[#%s @%s]: %s\n", channel, username, rest);
+                }
+            else 
+                dprintf(fd, "> Cannot acces to the channel.");
+            linked_list_drop(fds);
+            free(username);
+
             break;
         case '@':
-            // TODO: send to a user
+            fds = linked_list_new(NULL, NULL);
+            username = strdup(conn->user->username);
+
+            char *username_ = strtok_r(rest, " ", &rest) + 1;
+            if (strlen(username_) < 2 || !strcmp(username, username_)) {
+                UNLOCK;
+                break;
+            }
+
+            struct user *u = bstree_get(ss->users, username_);
+            if (!u) {
+                UNLOCK;
+                dprintf(fd, "> Cannot find user %s.\n", username_);
+                break;
+            }
+
+            for (size_t k = 0; k < u->connections->length; k++) {
+                struct connection *con = linked_list_get(u->connections, k);
+                linked_list_push(fds, &con->fd);
+            }
             UNLOCK;
+
+            for (size_t i = 0; i < fds->length; i++) {
+                int fd = *(int *) linked_list_get(fds, i);
+                // TODO: multithreaded send
+                dprintf(fd, "[dm @%s]: %s\n", username, rest);
+            }
+            linked_list_drop(fds);
+            free(username);
+
             break;
         default:;
-            struct linked_list *fds = linked_list_new(NULL, NULL);
-            char *username = strdup(conn->user->username);
+            fds = linked_list_new(NULL, NULL);
+            username = strdup(conn->user->username);
 
             if (!conn->user->channels->length) {
                 UNLOCK;
