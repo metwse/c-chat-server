@@ -171,7 +171,7 @@ void handle_message(struct connection *conn, struct shared_state *ss,
             free(username);
 
             break;
-        case '@':
+        case '@': // TODO: deduplicate code
             fds = linked_list_new(NULL, NULL);
             username = strdup(conn->user->username);
 
